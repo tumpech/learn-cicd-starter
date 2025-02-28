@@ -21,18 +21,18 @@ var authTests = []authTest{
 func TestGetAPIKey(t *testing.T) {
 
 	var output string
-	var err error
+	//var err error
 	header := make(http.Header)
 
 	for _, test := range authTests {
 
 		header.Set("Authorization", test.header)
-		output, err = GetAPIKey(header)
+		output, _ = GetAPIKey(header)
 		//if !errors.Is(err, test.err) {
 		//	t.Errorf("Error was not what we expected. test.err = %s, err = %s", test.err, err)
 		//}
 		if output != test.expected {
-			t.Errorf("Output was not what we expected. test.expected = %s, output = %s", test.err, err)
+			t.Errorf("Output was not what we expected. test.expected = %s, output = %s", test.expected, output)
 		}
 	}
 }
