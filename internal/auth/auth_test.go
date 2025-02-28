@@ -7,15 +7,17 @@ import (
 )
 
 type authTest struct {
-	header      string
+	headerKey   string
+	headerValue string
 	expected    string
 	expectedErr string
 }
 
 var authTests = []authTest{
-	{"", "", ErrNoAuthHeaderIncluded.Error()},
-	{"Bearer 1234567890", "", "malformed authorization header"},
-	{"ApiKey 1234567890", "1234567890", ""},
+	{"", "", "", "no authorization header included"},
+	{"Authorization", "", "", "no authorization header included"},
+	{"Authorization", "Bearer 1234567890", "", "malformed authorization header"},
+	{"Authorization", "ApiKey 1234567890", "1234567890", ""},
 }
 
 func TestGetAPIKey(t *testing.T) {
@@ -26,11 +28,11 @@ func TestGetAPIKey(t *testing.T) {
 
 	for _, test := range authTests {
 
-		header.Set("Authorization", test.header)
+		header.Set(test.headerKey, test.headerValue)
 		output, err = GetAPIKey(header)
 		if err != nil {
 			if !strings.Contains(err.Error(), test.expectedErr) {
-				t.Errorf("Error was not what we expected. test.err = %s, err = %s", test.expectedErr, err.Error())
+				t.Errorf("Error was not what we expected. test.expectedErr = %s, err.Error() = %s", test.expectedErr, err.Error())
 				return
 			}
 		}
